@@ -1,11 +1,36 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import './index.css'
-import { encrypt } from './md5'
+import { decrypt, encrypt } from './md5'
+import { useQuery } from './useQuery'
 
 export default function Pawd() {
+  const token = useQuery()
   const [info, setInfo] = useState('123')
   const [share, setShare] = useState('')
+  const [look, setLook] = useState('')
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    // 是否为校验状态
+    console.log('token', token)
+    if (typeof token !== 'undefined' || token !== '') {
+      const origin = token.split('#');
+      axios.get('http://localhost:8848/test/validate?token='+origin[0])
+      .then(res => {
+        console.log(res)
+        // setLook(decrypt(origin[1]??'', res?.value));
+        // setLoading(false);
+      })
+      .catch(() => {
+        setLook('已过期或失效');
+        setLoading(false);
+      })
+
+    } else {
+      setLoading(false);
+    }
+  }, [])
 
   function onShare() {
     if (info !== '') {
@@ -28,7 +53,11 @@ export default function Pawd() {
     document.querySelector('input')!.select();
   }
 
-  return (
+  return loading ? <div>加载中..</div> : look ? (
+    <div>
+
+    </div>
+    ) : (
     <div>
       {
         share === '' ?
@@ -38,10 +67,10 @@ export default function Pawd() {
           <button className="share-btn" onClick={onShare}>分享</button>
         </div> :
         <div>
-        <h3>分享链接</h3>
-        <input className="share-area" value={share} readOnly />
-        <button className="copy-btn" onClick={onSelect}>复制</button>
-      </div>
+          <h3>分享链接</h3>
+          <input className="share-area" value={share} readOnly />
+          <button className="copy-btn" onClick={onSelect}>复制</button>
+        </div>
       }
     </div>
   )
