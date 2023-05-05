@@ -12,6 +12,11 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+
+  --b-bg-2: #eceff4;
+  --b-txt: #2e3440;
+  --b-btn-bg: #242933;
+  --b-btn-txt: #ffffff;
 }
 
 a {

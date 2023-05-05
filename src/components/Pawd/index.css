@@ -1,0 +1,27 @@
+.password-area,
+.share-area {
+  margin: 0;
+  margin-bottom: 10px;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  max-width: 100%;
+  background: var(--b-bg-2);
+  border: 0;
+  border-radius: 0.25rem;
+  font: inherit;
+  line-height: 1.125;
+  resize: vertical;
+  color: var(--b-txt);
+}
+
+.share-btn,
+.copy-btn {
+  display: inline-block;
+  text-align: center;
+  white-space: nowrap;
+  background: var(--b-btn-bg);
+  color: var(--b-btn-txt);
+  border: 0;
+  cursor: pointer;
+  transition: opacity 0.25s;
+}

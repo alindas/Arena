@@ -10,7 +10,7 @@ function List() {
       </ul>
       <h1>React</h1>
       <ul>
-        <li><a href="/password">阅后即焚</a></li>
+        <li><a href="/#/password">阅后即焚</a></li>
       </ul>
     </div>
   )
