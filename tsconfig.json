@@ -16,6 +16,6 @@
     "noEmit": true,
     "jsx": "react-jsx"
   },
-  "include": ["src"],
+  "include": ["src", "vue/**/*.ts", "vue/**/*.d.ts", "vue/**/*.tsx", "vue/**/*.vue"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
