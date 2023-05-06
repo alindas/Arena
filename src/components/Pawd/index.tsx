@@ -5,27 +5,18 @@ import { decrypt, encrypt } from './md5'
 import { useQuery } from './useQuery'
 
 export default function Pawd() {
-  const token = useQuery()
+  const token = useQuery().token;
   const [info, setInfo] = useState('123')
   const [share, setShare] = useState('')
-  const [look, setLook] = useState('')
+  const [look, setLook] = useState<string | undefined>(undefined)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     // 是否为校验状态
-    console.log('token', token)
-    if (typeof token !== 'undefined' || token !== '') {
-      const origin = token.split('#');
-      axios.get('http://localhost:8848/test/validate?token='+origin[0])
-      .then(res => {
-        console.log(res)
-        // setLook(decrypt(origin[1]??'', res?.value));
-        // setLoading(false);
-      })
-      .catch(() => {
-        setLook('已过期或失效');
-        setLoading(false);
-      })
+    if (typeof token !== 'undefined' && token !== '') {
+      setLook('');
+      setLoading(false);
+
 
     } else {
       setLoading(false);
@@ -39,8 +30,8 @@ export default function Pawd() {
       .then(res => {
         if (/^2/.test(res?.status+'')) {
           const {key, value} = res?.data;
-          const encryVal = encrypt(info, value)
-          setShare(location.origin + '/#/password?token=' + key + '#' + encryVal);
+          const encryVal = encodeURIComponent(encrypt(info, value));
+          setShare(location.origin + '/#/password?token=' + key + '==' + encryVal);
         } else {
           throw new Error(res?.data);
         }
@@ -53,9 +44,25 @@ export default function Pawd() {
     document.querySelector('input')!.select();
   }
 
-  return loading ? <div>加载中..</div> : look ? (
-    <div>
+  function onLook() {
+    const origin = token.split('==');
+    axios.get('http://localhost:8848/test/validate?token='+origin[0])
+    .then(res => {
+      // console.log(res)
+      // let message = decrypt(decodeURIComponent(origin[1]??''), res?.data.value)
+      // console.log(message)
+      setLook(decrypt(origin[1]??'', res?.data.value));
+    })
+    .catch(() => {
+      setLook('已过期或失效');
+    })
+  }
 
+  return loading ? <div>加载中..</div> : typeof look !== 'undefined' ? (
+    <div>
+      <h3>以下信息不会被泄露</h3>
+      <div className="share-content">{look}</div>
+      <button className="copy-btn" onClick={onLook}>查看</button>
     </div>
     ) : (
     <div>

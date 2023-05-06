@@ -25,3 +25,10 @@
   cursor: pointer;
   transition: opacity 0.25s;
 }
+
+.share-content {
+  margin: 5vh auto;
+  width: 50vw;
+  height: 50vh;
+  background: var(--b-bg-2);
+}
