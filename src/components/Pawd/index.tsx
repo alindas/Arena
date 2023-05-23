@@ -6,7 +6,7 @@ import { useQuery } from './useQuery'
 
 export default function Pawd() {
   const token = useQuery().token;
-  const [info, setInfo] = useState('123')
+  const [info, setInfo] = useState('')
   const [share, setShare] = useState('')
   const [look, setLook] = useState<string | undefined>(undefined)
   const [loading, setLoading] = useState(true)

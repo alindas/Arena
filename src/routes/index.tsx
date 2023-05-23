@@ -3,6 +3,9 @@ import lazyLoad from './LazyLoad'
 import List from '@/List'
 
 const Pawd = lazy(() => import('@/components/Pawd'))
+const Demo = lazy(() => import('@/components/Demo'))
+const SW = lazy(() => import('@/components/ServiceWorker'))
+const Notice = lazy(() => import('@/components/Demo/Notice'))
 
 interface IMetaProps {
   keepAlive?: boolean
@@ -33,6 +36,21 @@ const routes: IRouteObject[] = [
     path: '/password',
     element: lazyLoad(Pawd),
     title: '密码验证'
+  },
+  {
+    path: '/sw',
+    element: lazyLoad(SW),
+    title: 'ServiceWorker'
+  },
+  {
+    path: '/notice',
+    element: lazyLoad(Notice),
+    title: 'Notice'
+  },
+  {
+    path: '/demo',
+    element: lazyLoad(Demo),
+    title: '测试组件'
   },
 
   // {

@@ -11,6 +11,9 @@ function List() {
       <h1>React</h1>
       <ul>
         <li><a href="/#/password">阅后即焚</a></li>
+        <li><a href="/#/sw">Service Worker</a></li>
+        <li><a href="/#/notice">Notice</a></li>
+        <li><a href="/#/demo">Demo</a></li>
       </ul>
     </div>
   )
