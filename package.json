@@ -5,7 +5,8 @@
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "electron ."
+    "start": "electron .",
+    "dev": "nodemon --watch main.js --exec npm run start"
   },
   "config": {
     "electron": {
@@ -15,6 +16,7 @@
   "author": "lhh",
   "license": "ISC",
   "devDependencies": {
+    "@electron/remote": "^2.0.9",
     "electron": "^24.3.1"
   }
 }
