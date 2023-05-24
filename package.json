@@ -1,0 +1,20 @@
+{
+  "name": "electron_ex",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "electron ."
+  },
+  "config": {
+    "electron": {
+      "mirror": "https://registry.npmmirror.com/-/binary/electron/"
+    }
+  },
+  "author": "lhh",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^24.3.1"
+  }
+}
