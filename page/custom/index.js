@@ -1,5 +1,21 @@
 
 window.addEventListener('DOMContentLoaded', () => {
+
+  // 控制窗口的关闭逻辑
+  window.onbeforeunload = () => {
+    const markEle = document.querySelector('.close-mark');
+    markEle.style.display = 'block';
+    const okBtn = markEle.querySelector('.confirm');
+    const cancelBtn = markEle.querySelector('.cancel');
+    okBtn.onclick = () => {
+      win.destroy();
+    }
+    cancelBtn.onclick = () => {
+      markEle.style.display = 'none';
+    }
+    return false
+  }
+
   const win = require('@electron/remote').getCurrentWindow();
   const opsBtn = document.querySelectorAll('.custom-header-ops > span');
 
