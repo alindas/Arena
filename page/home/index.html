@@ -5,6 +5,7 @@
     <!-- https://developer.mozilla.org/zh-CN/docs/Web/HTTP/CSP -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
     <title>你好!</title>
+    <link rel="stylesheet" href="./index.css">
   </head>
   <body>
     <h1>你好!</h1>
@@ -12,8 +13,9 @@
     Chromium <span id="chrome-version"></span>,
     和 Electron <span id="electron-version"></span>.
 
-    <div>
-      <button id="low-code-btn">打开开发面板</button>
+    <div class="home-container">
+      <button id="low-code-btn"><span>开发面板</span></button>
+      <button id="custom-btn"><span>自定义窗口</span></button>
     </div>
     <script src="./index.js"></script>
   </body>

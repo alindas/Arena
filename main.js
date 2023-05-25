@@ -1,5 +1,7 @@
 const { app, BrowserWindow } = require('electron')
 const path = require('path')
+const remote = require("@electron/remote/main")
+remote.initialize()
 
 const createWindow = () => {
   let win = new BrowserWindow({
@@ -12,7 +14,7 @@ const createWindow = () => {
     minHeight: 300,
     resizable: true,
     title: 'win title', // 权重比 html 里的低
-    icon: './lite/favicon.ico',
+    icon: './static/favicon.png',
     frame: true, //标签页，选项卡是否显示
     transparent: false, // 透明窗体
     // autoHideMenuBar: true, // 隐藏菜单
@@ -20,15 +22,12 @@ const createWindow = () => {
       nodeIntegration: true, // 是否允许渲染页面使用 node 环境
       contextIsolation: false,
       // nodeIntegrationInWorker: true, // 渲染进程中使用 require 模块
-      enableRemoteModule: true, // 允许使用 remote 模块
+      // enableRemoteModule: true, // 允许使用 remote 模块
       preload: path.join(__dirname, 'preload.js')
     }
   })
 
-  require('@electron/remote/main').initialize()  //添加语句
-  require('@electron/remote/main').enable(win.webContents)   //添加语句
-
-  win.loadFile('./index.html')
+  win.loadFile('./page/home/index.html')
 
   win.on('ready-to-show', () => {
     win.show();
@@ -80,4 +79,10 @@ app.on('will-quit', () => {
 
 app.on('quit', () => {
   console.log('8. quit')
+})
+
+// 新窗口创建时赋予主线程通信能力
+app.on('browser-window-created', (_, win) => {
+  // 对 @electron/remote 包的使用
+  remote.enable(win.webContents)
 })

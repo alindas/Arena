@@ -1,0 +1,17 @@
+.custom-header {
+  display: flex;
+  justify-content: space-between;
+  height: 32px;
+  border-bottom: 1px solid #ccc;
+}
+
+.custom-header-ops > span {
+  width: 3em;
+  line-height: 32px;
+  padding: 0 5px;
+}
+
+.custom-header-ops > span:hover {
+  background-color: #ddd;
+  cursor: default;
+}

@@ -13,10 +13,10 @@
       "mirror": "https://registry.npmmirror.com/-/binary/electron/"
     }
   },
-  "author": "lhh",
-  "license": "ISC",
   "devDependencies": {
     "@electron/remote": "^2.0.9",
-    "electron": "^24.3.1"
-  }
+    "electron": "^17.1.0"
+  },
+  "author": "lhh",
+  "license": "ISC"
 }
