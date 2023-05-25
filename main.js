@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow, Menu } = require('electron')
 const path = require('path')
 const remote = require("@electron/remote/main")
 remote.initialize()
@@ -26,6 +26,58 @@ const createWindow = () => {
       preload: path.join(__dirname, 'preload.js')
     }
   })
+
+  // 制定自定义菜单模板
+  const menuTemp = [
+    {
+      label: '文件',
+      submenu: [
+        {
+          label: '新建文件',
+          click() {
+            console.log('新建文件')
+          }
+        },
+        {
+          label: '新建文件夹'
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: '复制',
+          role: 'copy'
+        },
+        {
+          label: '粘贴',
+          role: 'paste'
+        },
+        {
+          type: 'separator'
+        },
+        {
+          label: '退出',
+          role: 'quit'
+        },
+      ]
+    },
+    {label: '编辑'},
+    {
+      label: '帮助',
+      submenu: [
+        {
+          label: '关于',
+          role: 'about'
+        }
+      ]
+    },
+  ]
+
+  // 烧录菜单
+  const menu = Menu.buildFromTemplate(menuTemp);
+  // 绑定
+  Menu.setApplicationMenu(menu)
+
 
   win.loadFile('./page/home/index.html')
 
