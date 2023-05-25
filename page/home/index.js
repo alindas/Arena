@@ -1,4 +1,4 @@
-const {BrowserWindow} = require('@electron/remote')
+const {BrowserWindow, getCurrentWindow} = require('@electron/remote')
 
 window.addEventListener('DOMContentLoaded', () => {
   const lowCodeBtn = document.getElementById('low-code-btn');
@@ -29,8 +29,12 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // 渲染进程不能直接操作 BrowserWindow
     let win = new BrowserWindow({
-      width: 800,
-      height: 600,
+      parent: getCurrentWindow(), // 指定父子窗口
+      modal: true, // 模态形式
+      x: 200,
+      y: 200,
+      width: 600,
+      height: 400,
       frame: false,
       webPreferences:{
         nodeIntegration:true,//允许渲染进程使用nodejs
