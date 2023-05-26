@@ -4,7 +4,8 @@ const {
   getCurrentWindow,
   dialog
 } = require('@electron/remote')
-const { ipcRenderer} = require('electron')
+const { ipcRenderer, shell} = require('electron')
+const path = require('path')
 
 window.addEventListener('DOMContentLoaded', () => {
 
@@ -124,6 +125,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('dialog-err-btn').onclick = () => {
     dialog.showErrorBox('自定义错误', '出错啦')
+  }
+
+  document.getElementById('shell-baidu').onclick = () => {
+    shell.openExternal('https://www.baidu.com')
+  }
+
+  document.getElementById('shell-folder').onclick = () => {
+    shell.showItemInFolder(path.resolve(__dirname))
   }
 
 })
