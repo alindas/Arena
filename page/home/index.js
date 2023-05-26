@@ -1,5 +1,5 @@
 const { Menu, BrowserWindow, getCurrentWindow} = require('@electron/remote')
-const { ipcRenderer, ipcMain } = require('electron')
+const { ipcRenderer } = require('electron')
 
 window.addEventListener('DOMContentLoaded', () => {
 
@@ -88,6 +88,12 @@ window.addEventListener('DOMContentLoaded', () => {
   ipcRenderer.on('mtp', (ev, data) => {
     console.log(data)
   })
+
+  document.getElementById('new-btn').onclick = () => {
+
+    ipcRenderer.sendSync('newWin', `打开窗口`)
+    localStorage.setItem('newWinMsg', new Date().valueOf())
+  }
 
 })
 

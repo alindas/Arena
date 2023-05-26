@@ -1,0 +1,31 @@
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  background: linear-gradient(#d4d1d5, #fffcfa);
+}
+
+.custom-header {
+  display: flex;
+  justify-content: space-between;
+  height: 32px;
+  border-bottom: 1px solid #ccc;
+}
+
+.custom-header-ops > span {
+  width: 3em;
+  line-height: 32px;
+  padding: 0 5px;
+}
+
+.custom-header-ops > span:hover {
+  background-color: #ddd;
+  cursor: default;
+}
+
+.custom-content {
+  height: calc(100px - 32px);
+  font-size: 1rem;
+  font-weight: 700;
+}
+

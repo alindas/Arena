@@ -1,8 +1,9 @@
 const { app, BrowserWindow, Menu, ipcMain } = require('electron')
 const path = require('path')
 const remote = require("@electron/remote/main")
-remote.initialize()
+const global = require('./global')
 
+remote.initialize()
 
 
 const createMenu = () => {
@@ -100,6 +101,8 @@ const createWindow = () => {
     }
   })
 
+  global.WinId = win.id;
+
   createMenu()
 
   win.loadFile('./page/home/index.html')
@@ -170,4 +173,34 @@ ipcMain.on('msg1', (ev, data) => {
 ipcMain.on('msg2', (ev, data) => {
   console.log(data)
   ev.returnValue = '来自于主进程回给Home的同步消息'
+})
+
+ipcMain.on('newWin', (ev, data) => {
+  let win = new BrowserWindow({
+    // x: 100, // 偏移
+    // y: 100,
+    // show: false, // 是否显示窗体
+    parent: BrowserWindow.fromId(global.WinId),
+    width: 800,
+    height: 600,
+    minWidth: 400,
+    minHeight: 300,
+    resizable: true,
+    frame: true, //标签页，选项卡是否显示
+    transparent: false, // 透明窗体
+    webPreferences: {
+      nodeIntegration: true, // 是否允许渲染页面使用 node 环境
+      contextIsolation: false,
+    }
+  })
+  win.loadFile('./page/demo/index.html')
+
+  win.on('ready-to-show', () => {
+    win.show();
+  })
+
+  win.on('close', () => {
+    console.log('4. closed')
+    win = null
+  })
 })
