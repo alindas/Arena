@@ -1,0 +1,10 @@
+electron-is-dev 环境端口
+
+concurrently 链接多个执行命令
+eg: concurrently \"npm start\" \"electron .\"
+
+wait-on
+eg: concurrently \"npm start\" \"wait-on http://localhost:3000 && electron .\"
+
+cross-env 设置跨平台的环境变量
+eg: concurrently \"cross-env BROWSER=none npm start\" \"wait-on http://localhost:3000 && electron .\"
