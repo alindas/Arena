@@ -135,5 +135,18 @@ window.addEventListener('DOMContentLoaded', () => {
     shell.showItemInFolder(path.resolve(__dirname))
   }
 
+  document.getElementById('notify').onclick = () => {
+    // console.log( path.join(__dirname, '../../'))
+    const notification = new window.Notification('electron 通知', {
+      // 通过 tag 设置不同类型的通知，相同 tag，相同 title，不同 body 同时成立才能满足通知的覆盖
+      tag: 'call',
+      body: `狠赚笔: ${new Date().valueOf()}`,
+      icon: '../../static/favicon.png'
+    })
+    notification.onclick = () => {
+      console.log('快跑')
+    }
+  }
+
 })
 
