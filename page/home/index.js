@@ -1,5 +1,10 @@
-const { Menu, BrowserWindow, getCurrentWindow} = require('@electron/remote')
-const { ipcRenderer } = require('electron')
+const {
+  Menu,
+  BrowserWindow,
+  getCurrentWindow,
+  dialog
+} = require('@electron/remote')
+const { ipcRenderer} = require('electron')
 
 window.addEventListener('DOMContentLoaded', () => {
 
@@ -93,6 +98,32 @@ window.addEventListener('DOMContentLoaded', () => {
 
     ipcRenderer.sendSync('newWin', `打开窗口`)
     localStorage.setItem('newWinMsg', new Date().valueOf())
+  }
+
+  document.getElementById('dialog-btn').onclick = () => {
+
+    dialog.showOpenDialog({
+      defaultPath: __dirname,
+      buttonLabel: '请选择',
+      title: 'dialog对话框',
+      properties: ['openFile'],
+      filters: [
+        {
+          name: '代码文件',
+          extensions: ['js', 'ts']
+        }
+      ]
+    })
+    .then((ret) => {
+      console.log(ret)
+    })
+    .catch(err => {
+      console.log(err)
+    })
+  }
+
+  document.getElementById('dialog-err-btn').onclick = () => {
+    dialog.showErrorBox('自定义错误', '出错啦')
   }
 
 })
