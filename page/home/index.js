@@ -1,6 +1,21 @@
-const {BrowserWindow, getCurrentWindow} = require('@electron/remote')
+const {Menu, BrowserWindow, getCurrentWindow} = require('@electron/remote')
 
 window.addEventListener('DOMContentLoaded', () => {
+
+  const parentWin = getCurrentWindow()
+  parentWin.webContents.openDevTools()
+
+  // 响应右键菜单
+  window.addEventListener('contextmenu', ev => {
+    ev.preventDefault()
+    console.log('response contextmenu')
+    Menu.buildFromTemplate([
+      {
+        label: '打开文件'
+      }
+    ]).popup({window: parentWin})
+  })
+
   const lowCodeBtn = document.getElementById('low-code-btn');
   lowCodeBtn.onclick = () => {
 
@@ -29,7 +44,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
     // 渲染进程不能直接操作 BrowserWindow
     let win = new BrowserWindow({
-      parent: getCurrentWindow(), // 指定父子窗口
+      parent: parentWin, // 指定父子窗口
       modal: true, // 模态形式
       x: 200,
       y: 200,

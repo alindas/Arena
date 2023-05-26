@@ -3,30 +3,9 @@ const path = require('path')
 const remote = require("@electron/remote/main")
 remote.initialize()
 
-const createWindow = () => {
-  let win = new BrowserWindow({
-    // x: 100, // 偏移
-    // y: 100,
-    // show: false, // 是否显示窗体
-    width: 800,
-    height: 600,
-    minWidth: 400,
-    minHeight: 300,
-    resizable: true,
-    title: 'win title', // 权重比 html 里的低
-    icon: './static/favicon.png',
-    frame: true, //标签页，选项卡是否显示
-    transparent: false, // 透明窗体
-    // autoHideMenuBar: true, // 隐藏菜单
-    webPreferences: {
-      nodeIntegration: true, // 是否允许渲染页面使用 node 环境
-      contextIsolation: false,
-      // nodeIntegrationInWorker: true, // 渲染进程中使用 require 模块
-      // enableRemoteModule: true, // 允许使用 remote 模块
-      preload: path.join(__dirname, 'preload.js')
-    }
-  })
 
+
+const createMenu = () => {
   // 制定自定义菜单模板
   const menuTemp = [
     {
@@ -67,7 +46,14 @@ const createWindow = () => {
       submenu: [
         {
           label: '关于',
-          role: 'about'
+          role: 'about',
+          icon: './static/favicon.png',
+          accelerator: 'ctrl + p'
+        },
+        {
+          label: '更多',
+          role: 'windowMenu',
+          type: 'submenu'
         }
       ]
     },
@@ -77,7 +63,34 @@ const createWindow = () => {
   const menu = Menu.buildFromTemplate(menuTemp);
   // 绑定
   Menu.setApplicationMenu(menu)
+}
 
+
+const createWindow = () => {
+  let win = new BrowserWindow({
+    // x: 100, // 偏移
+    // y: 100,
+    // show: false, // 是否显示窗体
+    width: 800,
+    height: 600,
+    minWidth: 400,
+    minHeight: 300,
+    resizable: true,
+    title: 'win title', // 权重比 html 里的低
+    icon: './static/favicon.png',
+    frame: true, //标签页，选项卡是否显示
+    transparent: false, // 透明窗体
+    // autoHideMenuBar: true, // 隐藏菜单
+    webPreferences: {
+      nodeIntegration: true, // 是否允许渲染页面使用 node 环境
+      contextIsolation: false,
+      // nodeIntegrationInWorker: true, // 渲染进程中使用 require 模块
+      // enableRemoteModule: true, // 允许使用 remote 模块
+      preload: path.join(__dirname, 'preload.js')
+    }
+  })
+
+  createMenu()
 
   win.loadFile('./page/home/index.html')
 
