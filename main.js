@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, ipcMain } = require('electron')
+const { app, BrowserWindow, Menu, ipcMain, globalShortcut } = require('electron')
 const path = require('path')
 const remote = require("@electron/remote/main")
 const global = require('./global')
@@ -76,6 +76,17 @@ const createMenu = () => {
   Menu.setApplicationMenu(menu)
 }
 
+const rejectShortCut = (key, fn) => {
+  if (!globalShortcut.register(key, fn)) {
+    console.log(`快捷方式${key}注册失败`)
+  }
+}
+
+const unRejectShortCut = (key) => {
+  if (!globalShortcut.unregister(key)) {
+    console.log(`快捷方式${key}解绑失败`)
+  }
+}
 
 const createWindow = () => {
   let win = new BrowserWindow({
@@ -136,6 +147,7 @@ app.whenReady().then(() => {
 
 app.on('ready', () => {
   console.log('1. ready')
+  rejectShortCut('ctrl + q', app.quit)
 })
 
 // 没有监听该事件，所有窗口关闭后应用自动退出
@@ -153,6 +165,8 @@ app.on('before-quit', () => {
 
 app.on('will-quit', () => {
   console.log('7. will-quit')
+  // unRejectShortCut('ctrl + q')
+  globalShortcut.unregisterAll()
 })
 
 app.on('quit', () => {
