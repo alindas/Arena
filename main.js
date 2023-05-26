@@ -92,7 +92,7 @@ const createWindow = () => {
   let win = new BrowserWindow({
     // x: 100, // 偏移
     // y: 100,
-    // show: false, // 是否显示窗体
+    show: false, // 是否显示窗体
     width: 800,
     height: 600,
     minWidth: 400,
@@ -136,13 +136,38 @@ const createWindow = () => {
   })
 }
 
+const createUrlWindow = (url) => {
+  let win = new BrowserWindow({
+    // x: 100, // 偏移
+    // y: 100,
+    show: false, // 是否显示窗体
+    width: 1980,
+    height: 1080,
+    minWidth: 400,
+    minHeight: 300,
+    resizable: true,
+    title: 'other', // 权重比 html 里的低
+    icon: './static/favicon.png',
+    frame: true, //标签页，选项卡是否显示
+  })
+  createMenu()
+  // win.webContents.openDevTools()
+  win.loadURL(url)
+  win.on('ready-to-show', () => {
+    win.show();
+  })
+
+  win.on('close', () => {
+    console.log('4. closed')
+    win = null
+  })
+}
+
 // 在 ready 事情被激活后才能创建窗口
 app.whenReady().then(() => {
-  createWindow();
+  // createWindow();
+  createUrlWindow('http://localhost:8000/')
 
-  app.on('activate', () => {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
-  })
 })
 
 app.on('ready', () => {
