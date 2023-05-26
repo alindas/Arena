@@ -1,4 +1,5 @@
-const {Menu, BrowserWindow, getCurrentWindow} = require('@electron/remote')
+const { Menu, BrowserWindow, getCurrentWindow} = require('@electron/remote')
+const { ipcRenderer, ipcMain } = require('electron')
 
 window.addEventListener('DOMContentLoaded', () => {
 
@@ -16,6 +17,7 @@ window.addEventListener('DOMContentLoaded', () => {
     ]).popup({window: parentWin})
   })
 
+  // 打开编辑面板
   const lowCodeBtn = document.getElementById('low-code-btn');
   lowCodeBtn.onclick = () => {
 
@@ -39,6 +41,7 @@ window.addEventListener('DOMContentLoaded', () => {
     })
   }
 
+  // 自定义窗口
   const customBtn = document.getElementById('custom-btn');
   customBtn.onclick = () => {
 
@@ -63,6 +66,28 @@ window.addEventListener('DOMContentLoaded', () => {
       win = null;
     })
   }
+
+  // 异步发送信息到主进程
+  const ipcBtn = document.getElementById('async-ipc-btn');
+  ipcBtn.onclick = () => {
+
+    ipcRenderer.send('msg1', '来自Home渲染进程的异步消息')
+  }
+
+  // 同步发送
+  document.getElementById('sync-ipc-btn').onclick = () => {
+
+    const msg = ipcRenderer.sendSync('msg2', '来自Home渲染进程的同步消息')
+    console.log(msg)
+  }
+
+  ipcRenderer.on('msg1Re', (ev, data) => {
+    console.log(data)
+  })
+
+  ipcRenderer.on('mtp', (ev, data) => {
+    console.log(data)
+  })
 
 })
 

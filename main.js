@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu } = require('electron')
+const { app, BrowserWindow, Menu, ipcMain } = require('electron')
 const path = require('path')
 const remote = require("@electron/remote/main")
 remote.initialize()
@@ -41,6 +41,16 @@ const createMenu = () => {
       ]
     },
     {label: '编辑'},
+    {
+      label: '刷新',
+      role: 'reload'
+    },
+    {
+      label: '发送消息',
+      click() {
+        BrowserWindow.getFocusedWindow().webContents.send('mtp', '主进行主动发送的消息')
+      }
+    },
     {
       label: '帮助',
       submenu: [
@@ -150,4 +160,14 @@ app.on('quit', () => {
 app.on('browser-window-created', (_, win) => {
   // 对 @electron/remote 包的使用
   remote.enable(win.webContents)
+})
+
+ipcMain.on('msg1', (ev, data) => {
+  console.log(data)
+  ev.sender.send('msg1Re', '来自于主进程回给Home的异步消息')
+})
+
+ipcMain.on('msg2', (ev, data) => {
+  console.log(data)
+  ev.returnValue = '来自于主进程回给Home的同步消息'
 })
