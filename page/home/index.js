@@ -207,9 +207,15 @@ window.addEventListener('DOMContentLoaded', () => {
 
   }
 
-  document.getElementById('electron-store').onclick = () => {
+  document.getElementById('add-store').onclick = () => {
     const store = getGlobal('store')
     store.set('animal', 'monkey')
+    console.log(store.get('animal'))
+  }
+
+  document.getElementById('del-store').onclick = () => {
+    const store = getGlobal('store')
+    store.delete('animal')
     console.log(store.get('animal'))
   }
 
