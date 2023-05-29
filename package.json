@@ -18,5 +18,8 @@
     "electron": "^17.1.0"
   },
   "author": "lhh",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "electron-store": "^8.1.0"
+  }
 }

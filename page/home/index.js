@@ -2,16 +2,20 @@ const {
   Menu,
   BrowserWindow,
   getCurrentWindow,
-  dialog
+  dialog,
+  getGlobal
 } = require('@electron/remote')
 const { ipcRenderer, shell} = require('electron')
 const path = require('path')
 const fs = require('fs').promises
+// const global = require('../../global')
+
+
 
 window.addEventListener('DOMContentLoaded', () => {
 
   const parentWin = getCurrentWindow()
-  parentWin.webContents.openDevTools()
+  // parentWin.webContents.openDevTools()
 
   // 响应右键菜单
   window.addEventListener('contextmenu', ev => {
@@ -25,8 +29,7 @@ window.addEventListener('DOMContentLoaded', () => {
   })
 
   // 打开编辑面板
-  const lowCodeBtn = document.getElementById('low-code-btn');
-  lowCodeBtn.onclick = () => {
+  document.getElementById('low-code-btn').onclick = () => {
 
     // 渲染进程不能直接操作 BrowserWindow
     let win = new BrowserWindow({
@@ -49,8 +52,7 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   // 自定义窗口
-  const customBtn = document.getElementById('custom-btn');
-  customBtn.onclick = () => {
+  document.getElementById('custom-btn').onclick = () => {
 
     // 渲染进程不能直接操作 BrowserWindow
     let win = new BrowserWindow({
@@ -75,8 +77,7 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   // 异步发送信息到主进程
-  const ipcBtn = document.getElementById('async-ipc-btn');
-  ipcBtn.onclick = () => {
+  document.getElementById('async-ipc-btn').onclick = () => {
 
     ipcRenderer.send('msg1', '来自Home渲染进程的异步消息')
   }
@@ -204,6 +205,16 @@ window.addEventListener('DOMContentLoaded', () => {
       console.error(err)
     })
 
+  }
+
+  document.getElementById('electron-store').onclick = () => {
+    const store = getGlobal('store')
+    store.set('animal', 'monkey')
+    console.log(store.get('animal'))
+  }
+
+  document.getElementById('demo').onclick = () => {
+    console.log('demo')
   }
 
 })

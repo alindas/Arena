@@ -1,10 +1,16 @@
 const { app, BrowserWindow, Menu, ipcMain, globalShortcut } = require('electron')
 const path = require('path')
 const remote = require("@electron/remote/main")
-const global = require('./global')
+// const global = require('./global')
+const Store = require('electron-store')
 
 remote.initialize()
 
+global.shareObject = {
+  WinId: null,
+  DocumentPath: '',
+}
+global.store = null
 
 const createMenu = () => {
   // 制定自定义菜单模板
@@ -112,10 +118,11 @@ const createWindow = () => {
     }
   })
 
-  global.WinId = win.id;
+  global.shareObject.WinId = win.id;
 
   createMenu()
 
+  win.webContents.openDevTools()
   win.loadFile('./page/home/index.html')
 
   win.on('ready-to-show', () => {
@@ -165,6 +172,7 @@ const createUrlWindow = (url) => {
 
 // 在 ready 事情被激活后才能创建窗口
 app.whenReady().then(() => {
+  console.log('response here')
   createWindow();
   // createUrlWindow('http://localhost:8000/')
 
@@ -173,7 +181,9 @@ app.whenReady().then(() => {
 app.on('ready', () => {
   console.log('1. ready')
   rejectShortCut('ctrl + q', app.quit)
-  global.DocumentPath = app.getPath('documents') // 获取本机用户文档储存位置
+  // 数据初始化
+  global.shareObject.DocumentPath = app.getPath('documents')  // 获取本机用户文档储存位置
+  global.store = new Store() // 数据保存到 app.getPath('userData') 的 config.json 文件
 })
 
 // 没有监听该事件，所有窗口关闭后应用自动退出
@@ -220,7 +230,7 @@ ipcMain.on('newWin', (ev, data) => {
     // x: 100, // 偏移
     // y: 100,
     // show: false, // 是否显示窗体
-    parent: BrowserWindow.fromId(global.WinId),
+    parent: BrowserWindow.fromId(global.shareObject.WinId),
     width: 800,
     height: 600,
     minWidth: 400,
