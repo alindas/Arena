@@ -6,6 +6,7 @@ const {
 } = require('@electron/remote')
 const { ipcRenderer, shell} = require('electron')
 const path = require('path')
+const fs = require('fs').promises
 
 window.addEventListener('DOMContentLoaded', () => {
 
@@ -146,6 +147,63 @@ window.addEventListener('DOMContentLoaded', () => {
     notification.onclick = () => {
       console.log('快跑')
     }
+  }
+
+  document.getElementById('add-file').onclick = () => {
+    // console.log(process.cwd()) // 获取项目根路径
+    fs.writeFile(path.join(process.cwd(), 'static/test.txt'), 'test file', 'utf-8')
+    .then(() => {
+      console.log('static/test.txt 文件创建成功')
+    })
+    .catch(err => {
+      console.log('文件创建失败')
+      console.error(err)
+    })
+
+  }
+
+  document.getElementById('del-file').onclick = () => {
+    fs.unlink(path.join(process.cwd(), 'static/test.txt'))
+    .then(() => {
+      console.log('static/test.txt 文件删除成功')
+    })
+    .catch(err => {
+      console.log('文件删除失败')
+      console.error(err)
+    })
+
+  }
+
+  document.getElementById('update-file').onclick = () => {
+    let filePath = path.join(process.cwd(), 'static/test.txt')
+    fs.readFile(filePath)
+    .then(value => {
+      console.log(value)
+      fs.writeFile(filePath, value+'\n新增111', 'utf-8')
+      .then(() => {
+        console.log('文件更新成功')
+      })
+      .catch((err) => {
+        throw new Error(err)
+      })
+    })
+    .catch((err) => {
+      console.log('文件更新失败')
+      console.error(err)
+    })
+
+  }
+
+  document.getElementById('search-file').onclick = () => {
+    fs.readdir(path.join(process.cwd(), 'static'))
+    .then(res => {
+      console.log(res)
+    })
+    .catch(err => {
+      console.log('文件读取失败')
+      console.error(err)
+    })
+
   }
 
 })

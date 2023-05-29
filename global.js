@@ -1,3 +1,4 @@
 module.exports = {
-  WinId: null
+  WinId: null,
+  DocumentPath:  ''
 }

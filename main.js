@@ -165,14 +165,15 @@ const createUrlWindow = (url) => {
 
 // 在 ready 事情被激活后才能创建窗口
 app.whenReady().then(() => {
-  // createWindow();
-  createUrlWindow('http://localhost:8000/')
+  createWindow();
+  // createUrlWindow('http://localhost:8000/')
 
 })
 
 app.on('ready', () => {
   console.log('1. ready')
   rejectShortCut('ctrl + q', app.quit)
+  global.DocumentPath = app.getPath('documents') // 获取本机用户文档储存位置
 })
 
 // 没有监听该事件，所有窗口关闭后应用自动退出

@@ -3,11 +3,18 @@
   flex-wrap: wrap;
   padding: 10px 8px;
   width: 100%;
+  box-sizing: border-box;
 }
 
 .home-container > button {
   outline: none;
 
+}
+
+.separator {
+  width: 100vw;
+  height: 1px;
+  background-color: #ccc;
 }
 
 button {
