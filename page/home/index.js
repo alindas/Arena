@@ -239,6 +239,17 @@ window.addEventListener('DOMContentLoaded', () => {
     parentWin.webContents.downloadURL('http://localhost:8848/test/download')
   }
 
+  document.getElementById('active').onclick = () => {
+    ipcRenderer.send('active')
+
+  }
+
+  document.getElementById('flash').onclick = () => {
+    ipcRenderer.send('flash')
+
+  }
+
+
   document.getElementById('demo').onclick = () => {
     console.log('demo')
   }

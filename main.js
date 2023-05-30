@@ -288,3 +288,23 @@ ipcMain.on('newWin', (ev, data) => {
   })
 })
 
+ipcMain.on('active', (ev, data) => {
+  let win = BrowserWindow.fromId(global.shareObject.WinId)
+  win.minimize()
+  setTimeout(() => {
+    console.log('showInactive')
+    // win.showInactive() // v17.1.0 不起作用
+    win.focus()
+  }, 1000)
+})
+
+ipcMain.on('flash', (ev, data) => {
+  let win = BrowserWindow.fromId(global.shareObject.WinId)
+  win.minimize()
+  setTimeout(() => {
+    console.log('flashFrame')
+    win.flashFrame(true)
+  }, 1000)
+})
+
+
