@@ -219,6 +219,26 @@ window.addEventListener('DOMContentLoaded', () => {
     console.log(store.get('animal'))
   }
 
+  // alink 下载
+  document.getElementById('alink').onclick = () => {
+    const link = document.createElement('a')
+    // link.href = 'https://github.com/alindas/RTL/archive/refs/heads/master.zip'
+    link.href = 'http://localhost:8848/test/download'
+    link.download = 'RTL.zip'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    console.log('demo')
+  }
+
+  document.getElementById('weblink').onclick = () => {
+    // 小文件
+    // parentWin.webContents.downloadURL('https://github.com/alindas/RTL/archive/refs/heads/master.zip')
+
+    // 大文件
+    parentWin.webContents.downloadURL('http://localhost:8848/test/download')
+  }
+
   document.getElementById('demo').onclick = () => {
     console.log('demo')
   }

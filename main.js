@@ -137,6 +137,39 @@ const createWindow = () => {
     console.log('3. did-finish-load')
   })
 
+  // 监听下载
+  win.webContents.session.on('will-download', (event, item, webContents) => {
+    // 有手动设置 setSavePath，则不会弹出保存位置对话框
+    const filePath = path.join(app.getPath('downloads'), item.getFilename());
+    item.setSavePath(filePath);
+
+    item.on('updated', (ev, state) => {
+      if (state === 'progressing') {
+        if (item.isPaused()) {
+          console.log('下载被暂停')
+        } else {
+          // 通过任务栏设置下载进度
+          win.setProgressBar(item.getReceivedBytes() / item.getTotalBytes())
+        }
+      } else if (state === 'interrupted') {
+        console.log('下载被中断')
+      } else {
+        console.log('下载中的其他状态')
+      }
+    })
+
+    item.on('done', (ev, state) => {
+      if (state === 'completed') {
+        console.log('文件下载完成')
+      } else if (state === 'cancelled') {
+        console.log('下载被取消')
+      } else {
+        console.log('下载完成的其他状态')
+      }
+      win.setProgressBar(-1) // 隐藏进度
+    })
+  })
+
   win.on('close', () => {
     console.log('4. closed')
     win = null
@@ -254,3 +287,4 @@ ipcMain.on('newWin', (ev, data) => {
     win = null
   })
 })
+
