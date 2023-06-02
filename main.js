@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, ipcMain, globalShortcut } = require('electron')
+const { app, BrowserWindow, Menu, MenuItem, ipcMain, globalShortcut, ipcRenderer } = require('electron')
 const path = require('path')
 const remote = require("@electron/remote/main")
 // const global = require('./global')
@@ -12,7 +12,7 @@ global.shareObject = {
 }
 global.store = null
 
-const createMenu = () => {
+const createBaseMenu = () => {
   // 制定自定义菜单模板
   const menuTemp = [
     {
@@ -82,6 +82,10 @@ const createMenu = () => {
   Menu.setApplicationMenu(menu)
 }
 
+const addMenu = (menu) => {
+  Menu.getApplicationMenu().append(new MenuItem(menu))
+}
+
 const rejectShortCut = (key, fn) => {
   if (!globalShortcut.register(key, fn)) {
     console.log(`快捷方式${key}注册失败`)
@@ -94,7 +98,7 @@ const unRejectShortCut = (key) => {
   }
 }
 
-const createWindow = () => {
+const createWindow = (config={}) => {
   let win = new BrowserWindow({
     // x: 100, // 偏移
     // y: 100,
@@ -103,11 +107,12 @@ const createWindow = () => {
     height: 600,
     minWidth: 400,
     minHeight: 300,
-    resizable: true,
+    resizable: true, // 为 false 时，通过 setSize 改变尺寸，只能放大不能缩小
     title: 'win title', // 权重比 html 里的低
     icon: './static/favicon.png',
     frame: true, //标签页，选项卡是否显示
     transparent: false, // 透明窗体
+    // titleBarStyle: 'hidden', // 隐藏默认的标题栏
     // autoHideMenuBar: true, // 隐藏菜单
     webPreferences: {
       nodeIntegration: true, // 是否允许渲染页面使用 node 环境
@@ -115,15 +120,16 @@ const createWindow = () => {
       // nodeIntegrationInWorker: true, // 渲染进程中使用 require 模块
       // enableRemoteModule: true, // 允许使用 remote 模块
       preload: path.join(__dirname, 'preload.js')
-    }
+    },
+    ...config
   })
 
   global.shareObject.WinId = win.id;
 
-  createMenu()
 
   win.webContents.openDevTools()
-  win.loadFile('./page/home/index.html')
+  // win.loadFile('./page/home/index.html')
+  win.loadFile('./page/compatible/index.html')
 
   win.on('ready-to-show', () => {
     win.show();
@@ -135,6 +141,11 @@ const createWindow = () => {
 
   win.webContents.on('did-finish-load', () => {
     console.log('3. did-finish-load')
+    win.webContents.insertCSS(`
+      .title-bar {
+        background-color: #f00;
+      }
+    `)
   })
 
   // 监听下载
@@ -190,7 +201,6 @@ const createUrlWindow = (url) => {
     icon: './static/favicon.png',
     frame: true, //标签页，选项卡是否显示
   })
-  createMenu()
   // win.webContents.openDevTools()
   win.loadURL(url)
   win.on('ready-to-show', () => {
@@ -203,12 +213,43 @@ const createUrlWindow = (url) => {
   })
 }
 
+const initialize = () => {
+  global.store.set('screen', [
+    '1920*1080',
+    '1680*1050',
+    '1600*1200',
+    '1440*900',
+    '1280*1024',
+    '1280*800',
+    '1152*864',
+    '1024*768',
+    '800*600'
+  ])
+}
+
 // 在 ready 事情被激活后才能创建窗口
 app.whenReady().then(() => {
-  console.log('response here')
-  createWindow();
-  // createUrlWindow('http://localhost:8000/')
+  // console.log('response here')
+  // createWindow()
+  createBaseMenu()
+  // 本地开发开启热更新的话，不用手动刷新
+  // addMenu({
+  //   label: '刷新视图',
+  //   click() {
+  //     BrowserWindow.getFocusedWindow().webContents.send('reload')
+  //   }
+  // })
+  createWindow({
+    // resizable: false,
+    // webPreferences: {
+    //   webSecurity: false,
+    //   contextIsolation: false,
+    //   nodeIntegration: true
+    // }
+  })
 
+  // createUrlWindow('http://localhost:8000/')
+  // initialize()
 })
 
 app.on('ready', () => {
@@ -247,6 +288,9 @@ app.on('browser-window-created', (_, win) => {
   // 对 @electron/remote 包的使用
   remote.enable(win.webContents)
 })
+
+// 开发环境或略证书校验
+app.commandLine.appendSwitch('ignore-certificate-errors')
 
 ipcMain.on('msg1', (ev, data) => {
   console.log(data)
