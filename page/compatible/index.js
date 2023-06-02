@@ -24,6 +24,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const pageUrl = store.get('page-url')
   if (pageUrl) {
     document.querySelector('iframe').src = pageUrl
+    document.querySelector('.compatible-content').classList.add('.compatible-content-pickup')
   }
 
   let userConfig = store.get('user')
@@ -58,7 +59,7 @@ window.addEventListener('DOMContentLoaded', () => {
     let remember = formData.get('remember')
     if (remember !== null && width && length && !screen) {
       let size = width + '*' + length
-      if (initial.findIndex(o => new RegExp(o).test(size)) === -1) {
+      if (initial.findIndex(o => new RegExp(`^${o}$`).test(width+''+length)) === -1) {
         console.log('size', size)
         initial.push(size)
         store.set('screen', initial)
@@ -103,6 +104,7 @@ window.addEventListener('DOMContentLoaded', () => {
     getGlobal('store').set('page-url', url)
     // getCurrentWindow().loadURL(url)
     document.querySelector('iframe').src = url
+    document.querySelector('.compatible-content').className = ('.compatible-content-pickup')
   }
 
   ipcRenderer.on('reload', (ev, data) => {
