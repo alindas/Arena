@@ -127,7 +127,9 @@ const createWindow = (config={}) => {
   global.shareObject.WinId = win.id;
 
 
-  win.webContents.openDevTools()
+  win.webContents.openDevTools({
+    mode: 'undocked' // 脱离窗口
+  })
   // win.loadFile('./page/home/index.html')
   win.loadFile('./page/compatible/index.html')
 

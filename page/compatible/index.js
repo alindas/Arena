@@ -12,7 +12,6 @@ window.addEventListener('DOMContentLoaded', () => {
   const store = getGlobal('store')
   // const initial = JSON.parse(store.get('screen')??'[]')
   const initial = store.get('screen')
-
   const screen = initial.map(o => {
     let node = document.createElement('option')
     node.value = o
@@ -21,6 +20,18 @@ window.addEventListener('DOMContentLoaded', () => {
   })
   console.log(store, initial, screen)
   document.querySelector('.form-select').append(...screen)
+
+  const pageUrl = store.get('page-url')
+  if (pageUrl) {
+    document.querySelector('iframe').src = pageUrl
+  }
+
+  let userConfig = store.get('user')
+  document.querySelector('input[name=width]').value = userConfig['width']
+  document.querySelector('input[name=length]').value = userConfig['length']
+  document.querySelector('select[name=screen]').value = userConfig['screen']
+  document.querySelector('select[name=scale]').value = userConfig['scale']
+  document.querySelector('input[name=remember]').checked = userConfig['remember']
 
   const triggerEle = document.querySelector('.config-trigger')
   triggerEle.onclick = () => {
@@ -45,7 +56,7 @@ window.addEventListener('DOMContentLoaded', () => {
     let screen = formData.get('screen')
     let scale = formData.get('scale')
     let remember = formData.get('remember')
-    if (remember && width && length && !screen) {
+    if (remember !== null && width && length && !screen) {
       let size = width + '*' + length
       if (initial.findIndex(o => new RegExp(o).test(size)) === -1) {
         console.log('size', size)
@@ -57,24 +68,39 @@ window.addEventListener('DOMContentLoaded', () => {
         document.querySelector('.form-select').append(node)
       }
     }
+    let win = getCurrentWindow()
+    if (win.maximizable) {
+      win.restore()
+    }
     if (screen) {
       let val = screen.split('*')
       triggerEle.click()
-      console.log('screen')
-      getCurrentWindow().setSize(+val[0], +val[1])
-
+      win.setSize(+val[0], +val[1])
     } else if (width && length) {
-      console.log('custom')
       triggerEle.click()
-      getCurrentWindow().setSize(+width, +length)
+      win.setSize(+width, +length)
 
     }
+    // console.log(document.querySelector('iframe').contentWindow)
+    // document.querySelector('iframe').contentWindow.devicePixelRatio = +scale/100
+    // document.querySelector('iframe').contentWindow.webContents.setZoomFactor(+scale/100)
+    win.webContents.setZoomFactor(+scale/100)
+    // document.querySelector('.config-side').style.transform = `scale(${1/(+scale/100)}0)`
     console.log(width,length,screen,scale,remember)
+    userConfig = {
+      width,
+      length,
+      screen,
+      scale,
+      remember: remember === null ? false : true
+    }
+    store.set('user', userConfig)
   })
 
   document.querySelector('.load-page-btn').onclick = () => {
     const url = document.querySelector('.page-url').value
     console.log('url', url)
+    getGlobal('store').set('page-url', url)
     // getCurrentWindow().loadURL(url)
     document.querySelector('iframe').src = url
   }

@@ -33,7 +33,15 @@
         </div>
         <div class="mb-3">
           <label for="customRange1" class="form-label">缩放</label>
-          <input type="range" class="form-range" name="scale">
+          <select class="form-select" name="scale">
+            <!-- 这里可以将尺寸信息保存到 electron-store config.json-->
+            <option value="150">150</option>
+            <option value="125">125</option>
+            <option value="110">110</option>
+            <option value="100" selected>100</option>
+            <option value="75">75</option>
+            <option value="50">50</option>
+          </select>
         </div>
         <div class="mb-3 form-check">
           <input type="checkbox" class="form-check-input" name="remember">

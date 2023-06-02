@@ -63,6 +63,7 @@ body {
   transform: translateX(100%);
   background-color: #ccc;
   transition: transform .3s cubic-bezier(0.075, 0.82, 0.165, 1);
+  transform-origin: right;
   z-index: 999;
 }
 
@@ -79,6 +80,11 @@ body {
   color: #fff;
   cursor: pointer;
   background-color: #195cf9;
+}
+
+.config-content {
+  height: 100%;
+  overflow: auto;
 }
 
 .config-size-item {
