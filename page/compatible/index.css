@@ -91,16 +91,20 @@ body {
   display: flex;
 }
 
+.history {
+  padding: 1em 0;
+}
+
 iframe {
   position: fixed;
   top: 0;
   left: 0;
   width: 0;
   height: 0;
-
+  background-color: #fff;
 }
 
-.third-page[src] {
+.third-page:not([src='']) {
   width: 100vw;
   height: 100vh;
 }

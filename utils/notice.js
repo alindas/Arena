@@ -3,7 +3,6 @@ class notice {
   static create(type) {
     // todo 优化项
     // 将 msg 通知项外面再包裹一个容器，用于多个通知之前不会被覆盖
-    console.log(type)
     let classList = type.split(' ')
     let noticeBox = document.querySelector('.notice-box')
     if (noticeBox === null) {

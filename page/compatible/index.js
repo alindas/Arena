@@ -20,8 +20,7 @@ window.addEventListener('DOMContentLoaded', () => {
     node.innerHTML = o
     return node
   })
-  // console.log(store, initial, screen)
-  document.querySelector('.form-select').append(...screen)
+  document.querySelector('.screen-list').append(...screen)
 
   const pageUrl = store.get('page-url')
   if (pageUrl) {
@@ -30,7 +29,6 @@ window.addEventListener('DOMContentLoaded', () => {
     .then(() => {
       let iframe = document.querySelector('iframe')
       iframe.src = pageUrl
-      document.querySelector('.compatible-content').classList.add('compatible-content-pickup')
       iframe.onload = () => {
         clearSkip()
       }
@@ -42,6 +40,18 @@ window.addEventListener('DOMContentLoaded', () => {
     })
 
   }
+
+  // 历史访问链接（十条）
+  const pageList = store.get('page-list')
+  const pageOps = pageList.map(o => {
+    let node = document.createElement('option')
+    node.value = o
+    node.innerHTML = o
+    return node
+  })
+  const pageListNode = document.querySelector('.page-list')
+  pageListNode.append(...pageOps)
+  pageListNode.value = pageUrl
 
   let userConfig = store.get('user')
   document.querySelector('input[name=width]').value = userConfig['width']
@@ -103,7 +113,7 @@ window.addEventListener('DOMContentLoaded', () => {
     // document.querySelector('iframe').contentWindow.webContents.setZoomFactor(+scale/100)
     win.webContents.setZoomFactor(+scale/100)
     // document.querySelector('.config-side').style.transform = `scale(${1/(+scale/100)}0)`
-    console.log(width,length,screen,scale,remember)
+    // console.log(width,length,screen,scale,remember)
     userConfig = {
       width,
       length,
@@ -116,11 +126,56 @@ window.addEventListener('DOMContentLoaded', () => {
 
   document.querySelector('.load-page-btn').onclick = () => {
     const url = document.querySelector('.page-url').value
-    console.log('url', url)
-    getGlobal('store').set('page-url', url)
-    // getCurrentWindow().loadURL(url)
-    document.querySelector('iframe').src = url
-    document.querySelector('.compatible-content').className = ('.compatible-content-pickup')
+    let clearSkip = createSkip()
+    fetch(url)
+    .then(() => {
+      store.set('page-url', url)
+      // 如果是新 url，则将其添加到 config 上
+      if (pageList.findIndex(o => o === url) === -1) {
+        store.set('page-list', [...pageList, url].slice(-10)) // 保存十条记录
+        let node = document.createElement('option')
+        node.value = url
+        node.innerHTML = url
+        pageListNode.append(node)
+        pageListNode.value = url
+      }
+      let iframe = document.querySelector('iframe')
+      iframe.src = url
+      iframe.onload = () => {
+        clearSkip()
+      }
+    })
+    .catch(err => {
+      console.log(err)
+      clearSkip()
+      notice.error('页面加载失败')
+    })
+
+  }
+
+  document.querySelector('.change-page-btn').onclick = () => {
+    triggerEle.click()
+    const url = document.querySelector('.page-list').value
+    let iframe = document.querySelector('iframe')
+    if (url === '') {
+      iframe.src = ''
+      return
+    }
+    let clearSkip = createSkip()
+    fetch(url)
+    .then(() => {
+      getGlobal('store').set('page-url', url)
+      iframe.src = url
+      iframe.onload = () => {
+        clearSkip()
+      }
+    })
+    .catch(err => {
+      console.log(err)
+      clearSkip()
+      notice.error('页面加载失败')
+    })
+
   }
 
   ipcRenderer.on('reload', (ev, data) => {
