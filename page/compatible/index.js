@@ -4,6 +4,8 @@ const {
   getGlobal
 } = require('@electron/remote')
 const { ipcRenderer} = require('electron')
+const createSkip = require('../../utils/skip')
+const notice = require('../../utils/notice')
 
 window.addEventListener('DOMContentLoaded', () => {
   let open = false;
@@ -18,13 +20,27 @@ window.addEventListener('DOMContentLoaded', () => {
     node.innerHTML = o
     return node
   })
-  console.log(store, initial, screen)
+  // console.log(store, initial, screen)
   document.querySelector('.form-select').append(...screen)
 
   const pageUrl = store.get('page-url')
   if (pageUrl) {
-    document.querySelector('iframe').src = pageUrl
-    document.querySelector('.compatible-content').classList.add('.compatible-content-pickup')
+    let clearSkip = createSkip()
+    fetch(pageUrl)
+    .then(() => {
+      let iframe = document.querySelector('iframe')
+      iframe.src = pageUrl
+      document.querySelector('.compatible-content').classList.add('compatible-content-pickup')
+      iframe.onload = () => {
+        clearSkip()
+      }
+    })
+    .catch(err => {
+      console.log(err)
+      clearSkip()
+      notice.error('页面加载失败')
+    })
+
   }
 
   let userConfig = store.get('user')
