@@ -33,7 +33,7 @@
     "productName": "Debugger",
     "files": [
       "debugger.js",
-      "page/compatible/*",
+      "page/**/*",
       "utils/**/*"
     ],
     "nsis": {
