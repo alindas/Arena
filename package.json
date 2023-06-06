@@ -22,12 +22,86 @@
     }
   },
   "devDependencies": {
-    "@electron/remote": "^2.0.9",
     "electron": "^17.1.0"
   },
   "author": "lhh",
   "license": "ISC",
   "dependencies": {
+    "@electron/remote": "^2.0.9",
     "electron-store": "^8.1.0"
+  },
+  "build": {
+    "appId": "com.electron_ex",
+    "productName": "electron_ex",
+    "files": [
+      "build/icons/*",
+      "src/**/*",
+      "main.js",
+      "preload.js",
+      "renderer.js",
+      "index.html",
+      "node_modules/**/*"
+    ],
+    "extraResources": [
+      "node_modules/@electron/remote/**/*"
+    ],
+    "directories": {
+      "output": "dist",
+      "app": "./",
+      "buildResources": "assets"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon":"./static/sea_ship.ico",
+      "uninstallerIcon":"./static/sea_star.ico",
+      "perMachine": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    },
+    "win": {
+      "icon": "./static/sea_ship.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "linux": {
+      "icon": "./static/sea_ship.ico"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "./static/sea_ship.ico"
+    },
+    "dmg": {
+      "title": "Mac程序",
+      "icon": "./static/sea_ship.ico",
+      "contents": [
+        {
+          "x": 110,
+          "y": 150
+        },
+        {
+          "x": 240,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ],
+      "window": {
+        "x": 400,
+        "y": 400
+      }
+    },
+    "publish": [
+      {
+        "provider": "generic",
+        "url": "http://127.0.0.1:8080/updata/"
+      }
+    ]
   }
 }
