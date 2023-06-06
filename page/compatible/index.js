@@ -10,7 +10,32 @@ const notice = require('../../utils/notice')
 
 window.addEventListener('DOMContentLoaded', () => {
   let open = false;
-  const store = new Store()
+  const store = new Store({
+    defaults: {
+      screen: [
+        "1920*1080",
+        "1680*1050",
+        "1600*1200",
+        "1440*900",
+        "1280*1024",
+        "1280*800",
+        "1152*864",
+        "1024*768",
+        "800*600",
+        "1536*824",
+        "400*300"
+      ],
+      "page-url": '',
+      "page-list": [],
+      "user": {
+        "width": "800",
+        "length": "600",
+        "screen": "800*600",
+        "scale": "100",
+        "remember": true
+      }
+    }
+  })
   // 将用户保存的内容更新到视图
   // app.getPath('userData') 的 config.json 文件
   // const initial = JSON.parse(store.get('screen')??'[]')
