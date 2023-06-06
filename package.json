@@ -1,8 +1,8 @@
 {
-  "name": "electron_ex",
+  "name": "debugger",
   "version": "1.0.0",
-  "description": "",
-  "main": "main.js",
+  "description": "页面兼容调试",
+  "main": "debugger.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron .",
@@ -14,7 +14,6 @@
     "dist-win64": "electron-builder --win --x64",
     "dist-mac": "electron-builder --mac",
     "dist-linux": "electron-builder --linux"
-
   },
   "config": {
     "electron": {
@@ -27,34 +26,21 @@
   "author": "lhh",
   "license": "ISC",
   "dependencies": {
-    "@electron/remote": "^2.0.9",
     "electron-store": "^8.1.0"
   },
   "build": {
-    "appId": "com.electron_ex",
-    "productName": "electron_ex",
+    "appId": "com.debugger",
+    "productName": "Debugger",
     "files": [
-      "build/icons/*",
-      "src/**/*",
-      "main.js",
-      "preload.js",
-      "renderer.js",
-      "index.html",
-      "node_modules/**/*"
+      "debugger.js",
+      "page/compatible/*",
+      "utils/**/*"
     ],
-    "extraResources": [
-      "node_modules/@electron/remote/**/*"
-    ],
-    "directories": {
-      "output": "dist",
-      "app": "./",
-      "buildResources": "assets"
-    },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
-      "installerIcon":"./static/sea_ship.ico",
-      "uninstallerIcon":"./static/sea_star.ico",
+      "installerIcon": "./static/sea_ship.ico",
+      "uninstallerIcon": "./static/sea_star.ico",
       "perMachine": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true

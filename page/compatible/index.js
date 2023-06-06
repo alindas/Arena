@@ -1,19 +1,22 @@
 
-const {
-  getCurrentWindow,
-  getGlobal
-} = require('@electron/remote')
-const { ipcRenderer} = require('electron')
+// const {
+//   getCurrentWindow,
+//   getGlobal
+// } = require('@electron/remote')
+const { ipcRenderer } = require('electron')
+const Store = require('electron-store')
 const createSkip = require('../../utils/skip')
 const notice = require('../../utils/notice')
 
 window.addEventListener('DOMContentLoaded', () => {
   let open = false;
-
+  const store = new Store()
   // 将用户保存的内容更新到视图
-  const store = getGlobal('store')
+  // app.getPath('userData') 的 config.json 文件
   // const initial = JSON.parse(store.get('screen')??'[]')
   const initial = store.get('screen')
+  // const initial = await ipcRenderer.invoke('getStore', 'screen')
+
   const screen = initial.map(o => {
     let node = document.createElement('option')
     node.value = o
@@ -95,23 +98,27 @@ window.addEventListener('DOMContentLoaded', () => {
         document.querySelector('.form-select').append(node)
       }
     }
-    let win = getCurrentWindow()
-    if (win.maximizable) {
-      win.restore()
-    }
+    // let win = ipcRenderer.sendSync('getCurrentWindow')
+    // if (win.maximizable) {
+    //   win.restore()
+    // }
+    ipcRenderer.sendSync('restoreWin')
     if (screen) {
       let val = screen.split('*')
       triggerEle.click()
-      win.setSize(+val[0], +val[1])
+      // win.setSize(+val[0], +val[1])
+      ipcRenderer.sendSync('setSize', val)
     } else if (width && length) {
       triggerEle.click()
-      win.setSize(+width, +length)
+      // win.setSize(+width, +length)
+      ipcRenderer.sendSync('setSize', [width, length])
 
     }
     // console.log(document.querySelector('iframe').contentWindow)
     // document.querySelector('iframe').contentWindow.devicePixelRatio = +scale/100
     // document.querySelector('iframe').contentWindow.webContents.setZoomFactor(+scale/100)
-    win.webContents.setZoomFactor(+scale/100)
+    // win.webContents.setZoomFactor(+scale/100)
+    ipcRenderer.sendSync('setZoomFactor', +scale/100)
     // document.querySelector('.config-side').style.transform = `scale(${1/(+scale/100)}0)`
     // console.log(width,length,screen,scale,remember)
     userConfig = {
@@ -164,7 +171,7 @@ window.addEventListener('DOMContentLoaded', () => {
     let clearSkip = createSkip()
     fetch(url)
     .then(() => {
-      getGlobal('store').set('page-url', url)
+      store.set('page-url', url)
       iframe.src = url
       iframe.onload = () => {
         clearSkip()
@@ -178,7 +185,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   }
 
-  ipcRenderer.on('reload', (ev, data) => {
-    document.querySelector('iframe').contentWindow.location.reload()
-  })
+  // ipcRenderer.on('reload', (ev, data) => {
+  //   document.querySelector('iframe').contentWindow.location.reload()
+  // })
 })

@@ -1,3 +1,4 @@
+// const { contextBridge, ipcRenderer } = require('electron')
 
 window.addEventListener('DOMContentLoaded', () => {
   // console.log(process.platform) // 运行平台
@@ -12,3 +13,12 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 })
+
+
+// contextBridge.exposeInMainWorld(
+//   'main',
+//   {
+//     getGlobal: (type) => ipcRenderer.sendSync('global', type),
+//     getCurrentWindow: () => ipcRenderer.sendSync('getCurrentWindow')
+//   }
+// )

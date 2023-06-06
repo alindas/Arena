@@ -1,16 +1,16 @@
 const { app, BrowserWindow, Menu, MenuItem, ipcMain, globalShortcut, ipcRenderer } = require('electron')
 const path = require('path')
-const remote = require("@electron/remote/main")
+// const remote = require("@electron/remote/main") // remote 模块不合适，避免使用
 // const global = require('./global')
+// remote.initialize()
 const Store = require('electron-store')
 
-remote.initialize()
+Store.initRenderer() // 在渲染进程中使用需要初始化
 
 global.shareObject = {
   WinId: null,
   DocumentPath: '',
 }
-global.store = null
 
 const createBaseMenu = () => {
   // 制定自定义菜单模板
@@ -116,6 +116,7 @@ const createWindow = (config={}) => {
     // autoHideMenuBar: true, // 隐藏菜单
     webPreferences: {
       nodeIntegration: true, // 是否允许渲染页面使用 node 环境
+      // 共享上下文，开启 contextBridge 需要。新版本 electron 渲染进程使用 require 还需要将 contextIsolation 设置为 false
       contextIsolation: false,
       // nodeIntegrationInWorker: true, // 渲染进程中使用 require 模块
       // enableRemoteModule: true, // 允许使用 remote 模块
@@ -131,8 +132,8 @@ const createWindow = (config={}) => {
     mode: 'undocked' // 脱离窗口
   })
   // win.loadFile('./page/home/index.html')
-  win.loadFile('./page/compatible/index.html')
-
+  // win.loadFile('./page/compatible/index.html')
+  win.loadFile(path.resolve('./page/compatible/index.html'))
   win.on('ready-to-show', () => {
     win.show();
   })
@@ -216,17 +217,17 @@ const createUrlWindow = (url) => {
 }
 
 const initialize = () => {
-  global.store.set('screen', [
-    '1920*1080',
-    '1680*1050',
-    '1600*1200',
-    '1440*900',
-    '1280*1024',
-    '1280*800',
-    '1152*864',
-    '1024*768',
-    '800*600'
-  ])
+  // global.store.set('screen', [
+  //   '1920*1080',
+  //   '1680*1050',
+  //   '1600*1200',
+  //   '1440*900',
+  //   '1280*1024',
+  //   '1280*800',
+  //   '1152*864',
+  //   '1024*768',
+  //   '800*600'
+  // ])
 }
 
 // 在 ready 事情被激活后才能创建窗口
@@ -259,7 +260,6 @@ app.on('ready', () => {
   rejectShortCut('ctrl + q', app.quit)
   // 数据初始化
   global.shareObject.DocumentPath = app.getPath('documents')  // 获取本机用户文档储存位置
-  global.store = new Store() // 数据保存到 app.getPath('userData') 的 config.json 文件
 })
 
 // 没有监听该事件，所有窗口关闭后应用自动退出
@@ -288,7 +288,7 @@ app.on('quit', () => {
 // 新窗口创建时赋予主线程通信能力
 app.on('browser-window-created', (_, win) => {
   // 对 @electron/remote 包的使用
-  remote.enable(win.webContents)
+  // remote.enable(win.webContents)
 })
 
 // 开发环境或略证书校验
@@ -352,5 +352,36 @@ ipcMain.on('flash', (ev, data) => {
     win.flashFrame(true)
   }, 1000)
 })
+
+// preload 中暴露的 main 对象及api
+ipcMain.on('restoreWin', (ev, data) => {
+  let win = BrowserWindow.getFocusedWindow()
+  if (win.maximizable) {
+    win.restore()
+  }
+  ev.returnValue = ''
+})
+
+ipcMain.on('setSize', (ev, data) => {
+  BrowserWindow.getFocusedWindow().setSize(+data[0], +data[1])
+  ev.returnValue = ''
+})
+
+ipcMain.on('setZoomFactor', (ev, data) => {
+  BrowserWindow.getFocusedWindow().webContents.setZoomFactor(data)
+  ev.returnValue = ''
+})
+
+// ipcMain.handle('getStore', (ev, key) => {
+//   console.log('getStore', global.store.get(key))
+//   return global.store.get(key)
+//   // ev.returnValue = global.store.get(data)
+// });
+
+// ipcMain.on('setStore', (ev, key, data) => {
+//   console.log(key, data)
+//   // store.set(data.key, data.val)
+//   ev.returnValue = ''
+// });
 
 
