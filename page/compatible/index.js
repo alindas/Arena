@@ -9,6 +9,13 @@ const createSkip = require('../../utils/skip')
 const notice = require('../../utils/notice')
 
 window.addEventListener('DOMContentLoaded', () => {
+
+  // 无论返回什么都不会关闭窗口
+  window.onbeforeunload = async () => {
+    ipcRenderer.send('win', 'close')
+    return false
+  }
+
   let open = false;
   const store = new Store({
     defaults: {

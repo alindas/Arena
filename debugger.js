@@ -1,5 +1,6 @@
-const { app, Menu, BrowserWindow, globalShortcut, ipcMain } = require('electron')
+const { app, Menu, BrowserWindow, globalShortcut, ipcMain, Tray } = require('electron')
 const Store = require('electron-store')
+const path = require('path')
 
 Store.initRenderer() // 在渲染进程中使用需要初始化
 
@@ -7,6 +8,8 @@ global.shareObject = {
   WinId: null,
   DocumentPath: '',
 }
+
+let tray = null // 系统托盘需要全局变量声明，避免运行过程中被垃圾回收机制回收
 
 const rejectShortCut = (key, fn) => {
   if (!globalShortcut.register(key, fn)) {
@@ -74,6 +77,19 @@ const createBaseMenu = () => {
   const menu = Menu.buildFromTemplate(menuTemp);
   // 绑定
   Menu.setApplicationMenu(menu)
+}
+
+const createTray = (config = {}) => {
+  tray = new Tray('./static/sea_ship.ico')
+  tray.setToolTip('页面兼容调试')
+  tray.on('click', () => {
+    BrowserWindow.fromId(global.shareObject.WinId).show()
+  })
+  if (config.contextMenu) {
+    tray.on('right-click', () => {
+      tray.popUpContextMenu(config.contextMenu)
+    })
+  }
 }
 
 const createWindow = (config={}) => {
@@ -149,6 +165,14 @@ const createWindow = (config={}) => {
 
 app.whenReady().then(() => {
   createBaseMenu()
+  createTray({
+    contextMenu: Menu.buildFromTemplate([
+      {
+        label: '退出',
+        role: 'quit'
+      }
+    ])
+  })
   createWindow()
   rejectShortCut('ctrl + q', app.quit)
   global.shareObject.DocumentPath = app.getPath('documents')  // 获取本机用户文档储存位置
@@ -161,11 +185,14 @@ app.on('before-quit', () => {
 
 app.on('will-quit', () => {
   globalShortcut.unregisterAll()
+  tray = null
 })
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+  console.log('window-all-closed')
+  if (process.platform !== 'darwin') { // win 平台所有窗口关闭后应用也关闭
     app.quit()
+    // BrowserWindow.fromId(global.shareObject.WinId).hide()
   }
 })
 
@@ -182,11 +209,26 @@ ipcMain.on('restoreWin', (ev, data) => {
 
 ipcMain.on('setSize', (ev, data) => {
   BrowserWindow.getFocusedWindow().setSize(+data[0], +data[1])
+  // BrowserWindow.getFocusedWindow().setContentSize(+data[0], +data[1])
   ev.returnValue = ''
 })
 
 ipcMain.on('setZoomFactor', (ev, data) => {
   BrowserWindow.getFocusedWindow().webContents.setZoomFactor(data)
   ev.returnValue = ''
+})
+
+ipcMain.on('win', (ev, data) => {
+  if (data === 'open') {
+    BrowserWindow.fromId(global.shareObject.WinId).show()
+  } else if (data === 'close') {
+    console.log(BrowserWindow.length)
+    // 多个窗口时关闭其窗口
+    if (BrowserWindow.length > 0) {
+      BrowserWindow.fromId(global.shareObject.WinId).destroy()
+    } else {
+      BrowserWindow.fromId(global.shareObject.WinId).hide()
+    }
+  }
 })
 
