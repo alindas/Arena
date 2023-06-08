@@ -37,6 +37,20 @@
       "page/**/*",
       "utils/**/*"
     ],
+    "asar": true,
+    "builderOptions": {
+      "prepackaged": "./build",
+      "asarUnpack": [
+        "**/preload/**"
+      ],
+      "extraFiles": [
+        {
+          "from": "src/preload",
+          "to": "preload",
+          "filter": ["*.js"]
+        }
+      ]
+    },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,

@@ -10,6 +10,7 @@ global.shareObject = {
 }
 
 let tray = null // 系统托盘需要全局变量声明，避免运行过程中被垃圾回收机制回收
+let dynamicWinCount = 0 // 动态的窗口开启数量
 
 const rejectShortCut = (key, fn) => {
   if (!globalShortcut.register(key, fn)) {
@@ -106,7 +107,10 @@ const createWindow = (config={}) => {
     webPreferences: {
       nodeIntegration: true, // 是否允许渲染页面使用 node 环境
       contextIsolation: false,
-      // 打包后影响应用运行！！！暂且找不到原因
+      // 打包后影响应用运行！！！
+      /**
+       * https://github.com/alindas/Arena/issues/1
+       */
       // preload: path.join(__dirname, 'preload.js')
       // preload: path.resolve('./preload.js')
     },
@@ -123,6 +127,20 @@ const createWindow = (config={}) => {
   // win.loadFile(path.resolve('./page/compatible/index.html'))
   win.on('ready-to-show', () => {
     win.show();
+  })
+
+  win.on('closed', () => {
+    console.log('closed')
+    dynamicWinCount--
+    win = null
+  })
+
+  win.on('show', () => {
+    console.log('show')
+  })
+
+  win.on('hide', () => {
+    console.log('hide')
   })
 
   // // 监听下载
@@ -158,8 +176,13 @@ const createWindow = (config={}) => {
   //   })
   // })
 
+  // close 不是真正的关闭。后台挂起也会触发该生命周期
   win.on('close', () => {
-    win = null
+    console.log('close')
+  })
+
+  win.on('focus', () => {
+    global.shareObject.WinId = win.id
   })
 }
 
@@ -181,11 +204,15 @@ app.whenReady().then(() => {
 
 app.on('before-quit', () => {
   ipcMain.removeAllListeners() // 摧毁所有 ipc 监视器
+  if (tray) {
+    tray.destroy() //释放托盘资源
+  }
+  // 关闭所有窗口
+  BrowserWindow.getAllWindows().forEach(win => win.destroy())
 })
 
 app.on('will-quit', () => {
   globalShortcut.unregisterAll()
-  tray = null
 })
 
 app.on('window-all-closed', () => {
@@ -194,6 +221,11 @@ app.on('window-all-closed', () => {
     app.quit()
     // BrowserWindow.fromId(global.shareObject.WinId).hide()
   }
+})
+
+// 新窗口创建时
+app.on('browser-window-created', () => {
+  dynamicWinCount++
 })
 
 app.commandLine.appendSwitch('ignore-certificate-errors')
@@ -222,9 +254,10 @@ ipcMain.on('win', (ev, data) => {
   if (data === 'open') {
     BrowserWindow.fromId(global.shareObject.WinId).show()
   } else if (data === 'close') {
-    console.log(BrowserWindow.length)
+    // console.log(BrowserWindow.length) // 静态的
+    console.log('winc', dynamicWinCount)
     // 多个窗口时关闭其窗口
-    if (BrowserWindow.length > 0) {
+    if (dynamicWinCount > 1) {
       BrowserWindow.fromId(global.shareObject.WinId).destroy()
     } else {
       BrowserWindow.fromId(global.shareObject.WinId).hide()
