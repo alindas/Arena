@@ -6,7 +6,8 @@ function renderOne() {
   skipWrapper.append(skip)
   document.body.append(skipWrapper)
   return () => {
-    document.body.removeChild(skipWrapper)
+    skipWrapper.remove()
+    // document.body.removeChild(skipWrapper)
   }
 }
 
@@ -20,7 +21,8 @@ function renderTwo() {
   })
   document.body.append(skipWrapper)
   return () => {
-    document.body.removeChild(skipWrapper)
+    skipWrapper.remove()
+    // document.body.removeChild(skipWrapper)
   }
 }
 
