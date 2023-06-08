@@ -1,8 +1,10 @@
-const { app, Menu, BrowserWindow, globalShortcut, ipcMain, Tray } = require('electron')
+const { app, session, Menu, BrowserWindow, globalShortcut, ipcMain, Tray } = require('electron')
 const Store = require('electron-store')
-const path = require('path')
+// const path = require('path')
+// const {createServer} = require('./utils/request')
 
 Store.initRenderer() // 在渲染进程中使用需要初始化
+// createServer()
 
 global.shareObject = {
   WinId: null,
@@ -199,6 +201,21 @@ app.whenReady().then(() => {
   createWindow()
   rejectShortCut('ctrl + q', app.quit)
   global.shareObject.DocumentPath = app.getPath('documents')  // 获取本机用户文档储存位置
+
+  // 解除iframe嵌套网页的安全策略限制
+  session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+    const responseHeaders = details.responseHeaders
+    // responseHeaders['Content-Security-Policy'] = ['default-src \'none\'']
+    if ('Content-Security-Policy' in responseHeaders) {
+      delete responseHeaders['Content-Security-Policy']
+
+    }
+    if ('X-Frame-Options' in responseHeaders) {
+      delete responseHeaders['X-Frame-Options']
+
+    }
+    callback({ responseHeaders })
+  })
 
 })
 

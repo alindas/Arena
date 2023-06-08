@@ -59,7 +59,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   const pageUrl = store.get('page-url')
   if (pageUrl) {
-    let clearSkip = createSkip()
+    let clearSkip = createSkip(2)
     fetch(pageUrl)
     .then(() => {
       let iframe = document.querySelector('iframe')
@@ -165,7 +165,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
   document.querySelector('.load-page-btn').onclick = () => {
     const url = document.querySelector('.page-url').value
-    let clearSkip = createSkip()
+    let clearSkip = createSkip(2)
     fetch(url)
     .then(() => {
       store.set('page-url', url)
@@ -200,9 +200,9 @@ window.addEventListener('DOMContentLoaded', () => {
       iframe.src = ''
       return
     }
-    let clearSkip = createSkip()
+    let clearSkip = createSkip(2)
     fetch(url)
-    .then(() => {
+    .then((res) => {
       store.set('page-url', url)
       iframe.src = url
       iframe.onload = () => {
